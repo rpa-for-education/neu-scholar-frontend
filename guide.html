@@ -1,0 +1,342 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>NEU Scholar API — Tài liệu hướng dẫn sử dụng</title>
+<link rel="icon" type="image/svg+xml" href="/vite.png" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0b0f17;--panel:#101826;--muted:#8892a6;--text:#eef2ff;
+    --brand:#7c9cff;--brand-2:#22d3ee;--ok:#22c55e;--warn:#f59e0b;--err:#ef4444;
+    --code:#0c1220;--border:#1e293b
+  }
+  *{box-sizing:border-box} html,body{height:100%}
+  body{
+    margin:0; font-family:Inter,system-ui,Segoe UI,Roboto,Helvetica,Arial;
+    color:var(--text); background:
+      radial-gradient(1200px 600px at 80% -20%, rgba(124,156,255,0.15), transparent 70%),
+      radial-gradient(900px 500px at -10% 20%, rgba(34,211,238,0.12), transparent 70%),
+      var(--bg);
+  }
+  .container{max-width:1100px;margin:0 auto;padding:48px 20px 80px}
+  header{
+    display:flex; align-items:center; gap:16px; margin-bottom:28px
+  }
+  .logo{
+    inline-size:48px; block-size:48px; border-radius:14px; background:
+      linear-gradient(135deg,var(--brand),var(--brand-2));
+    display:grid; place-items:center; color:white; font-weight:800; letter-spacing:.5px
+  }
+  h1{font-size:28px; margin:0}
+  .sub{color:var(--muted); margin-top:6px}
+  .panel{background:rgba(255,255,255,0.03); border:1px solid var(--border);
+    border-radius:16px; padding:20px; backdrop-filter: blur(6px)}
+  .grid{display:grid; grid-template-columns:1fr 1fr; gap:16px}
+  @media (max-width:940px){ .grid{grid-template-columns:1fr} }
+  h2{font-size:20px; margin:22px 0 10px}
+  h3{font-size:16px; margin:18px 0 8px}
+  .badge{display:inline-flex; align-items:center; gap:8px; padding:6px 10px;
+    border-radius:999px; font-size:12px; font-weight:600; color:#001;
+    background:linear-gradient(135deg,var(--brand),var(--brand-2));}
+  .endpoint{display:flex; gap:10px; align-items:center; margin:10px 0}
+  .method{font-weight:700; font-size:12px; padding:6px 10px; border-radius:8px}
+  .GET{background:rgba(34,211,238,.12); color:#67e8f9; border:1px solid rgba(34,211,238,.35)}
+  .POST{background:rgba(124,156,255,.12); color:#aab8ff; border:1px solid rgba(124,156,255,.35)}
+  code, pre{
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
+    font-size:13px; color:#e6eaff
+  }
+  pre{
+    margin:10px 0; padding:14px 16px; background:var(--code); border:1px solid var(--border);
+    border-radius:12px; overflow:auto
+  }
+  .kvs{display:grid; grid-template-columns:160px 1fr; gap:10px; margin:10px 0}
+  .kvs div{padding:10px 12px; border:1px dashed var(--border); border-radius:10px}
+  .muted{color:var(--muted)}
+  .table{width:100%; border-collapse:separate; border-spacing:0; overflow:hidden;
+    border-radius:12px; border:1px solid var(--border)}
+  .table th,.table td{padding:10px 12px; border-bottom:1px solid var(--border); text-align:left}
+  .table th{background:#0f1625; color:#cbd5e1; font-weight:600}
+  .table tr:last-child td{border-bottom:none}
+  .pill{padding:3px 8px; border-radius:999px; background:#0e1a2b; border:1px solid var(--border); font-size:12px}
+  .ok{color:var(--ok)} .warn{color:var(--warn)} .err{color:var(--err)}
+  .footer{margin-top:40px; color:var(--muted); font-size:12px}
+  .copy{cursor:pointer}
+  .tip{font-size:12px; color:var(--muted)}
+  .toc a{color:#bcd1ff; text-decoration:none}
+  .toc a:hover{text-decoration:underline}
+</style>
+<script>
+  function copy(txt){
+    navigator.clipboard.writeText(txt);
+    const el = event?.target; if(!el) return;
+    const prev = el.innerText; el.innerText = "Đã copy ✓";
+    setTimeout(()=> el.innerText = prev, 1400);
+  }
+</script>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div class="logo">RPA</div>
+      <div>
+        <h1>RPA Academic API</h1>
+        <div class="sub">Tài liệu hướng dẫn triển khai & sử dụng các API (journals, conferences, tìm kiếm & agent)</div>
+      </div>
+    </header>
+
+    <div class="panel grid">
+      <div>
+        <span class="badge">Thông tin nhanh</span>
+        <div class="kvs" style="margin-top:12px">
+          <div><strong>Base URL</strong></div><div><code>https://neu-scholar-backend.vercel.app</code></div>
+          <div><strong>Định dạng</strong></div><div>REST, JSON UTF-8</div>
+          <div><strong>Auth</strong></div><div>Không yêu cầu (nội bộ)</div>
+          <div><strong>Version</strong></div><div>v1 (ổn định theo file <code>app.js</code> cung cấp)</div>
+        </div>
+      </div>
+      <div>
+        <span class="badge">Ghi chú</span>
+        <ul class="muted">
+          <li>Tham số <code>q</code> dùng <em>regex</em> không phân biệt hoa thường.</li>
+          <li>Tham số <code>limit</code>, <code>skip</code> có trong các API liệt kê.</li>
+          <li>Hệ thống tự import dữ liệu lúc khởi động và theo lịch CRON (nếu bật).</li>
+        </ul>
+      </div>
+    </div>
+
+    <h2 id="toc">Mục lục</h2>
+    <div class="panel toc">
+      <ol>
+        <li><a href="#journals">Danh sách & tìm kiếm tạp chí (journals)</a></li>
+        <li><a href="#conferences">Danh sách & tìm kiếm hội thảo (conferences)</a></li>
+        <li><a href="#search-all">Tìm kiếm tổng hợp (journals + conferences)</a></li>
+        <li><a href="#agent">Agent API (trả lời tự động)</a></li>
+        <li><a href="#errors">Mã lỗi & định dạng</a></li>
+        <li><a href="#env">Biến môi trường liên quan</a></li>
+      </ol>
+    </div>
+
+    <!-- Journals -->
+    <section id="journals">
+      <h2>Tạp chí (Journals)</h2>
+
+      <div class="panel">
+        <div class="endpoint">
+          <span class="method GET">GET</span>
+          <code>/api/journals</code>
+        </div>
+        <div class="muted">Lấy danh sách tạp chí hoặc lọc theo từ khóa.</div>
+
+        <table class="table" style="margin-top:12px">
+          <thead><tr><th>Tham số</th><th>Kiểu</th><th>Mặc định</th><th>Mô tả</th></tr></thead>
+          <tbody>
+            <tr><td><code>q</code></td><td>string</td><td><span class="muted">—</span></td><td>Từ khóa (regex, không phân biệt hoa thường) tìm trong <code>title</code>, <code>categories</code>, <code>areas</code>, <code>publisher</code>, <code>issn</code>.</td></tr>
+            <tr><td><code>limit</code></td><td>number</td><td>50</td><td>Số bản ghi trả về.</td></tr>
+            <tr><td><code>skip</code></td><td>number</td><td>0</td><td>Bỏ qua N bản ghi đầu (phân trang).</td></tr>
+          </tbody>
+        </table>
+
+        <h3>Ví dụ</h3>
+        <pre><code># Lấy 50 journals đầu tiên
+curl -s "https://neu-scholar-backend.vercel.app/api/journals"
+
+# Tìm theo từ khóa (ví dụ: Education), giới hạn 10
+curl -s "https://neu-scholar-backend.vercel.app/api/journals?q=Education&amp;limit=10"</code></pre>
+      </div>
+
+      <div class="panel" style="margin-top:14px">
+        <div class="endpoint">
+          <span class="method GET">GET</span>
+          <code>/api/journals/search</code>
+        </div>
+        <div class="muted">Tìm kiếm ưu tiên vector search; nếu trống sẽ tự fallback sang text search.</div>
+
+        <table class="table" style="margin-top:12px">
+          <thead><tr><th>Tham số</th><th>Kiểu</th><th>Mặc định</th><th>Mô tả</th></tr></thead>
+          <tbody>
+            <tr><td><code>q</code> <span class="pill">bắt buộc</span></td><td>string</td><td>—</td><td>Câu truy vấn.</td></tr>
+            <tr><td><code>limit</code></td><td>number</td><td>5</td><td>Số kết quả mong muốn.</td></tr>
+          </tbody>
+        </table>
+
+        <h3>Ví dụ</h3>
+        <pre><code>curl -s "https://neu-scholar-backend.vercel.app/api/journals/search?q=Education&amp;limit=2"</code></pre>
+      </div>
+    </section>
+
+    <!-- Conferences -->
+    <section id="conferences">
+      <h2>Hội thảo (Conferences)</h2>
+
+      <div class="panel">
+        <div class="endpoint">
+          <span class="method GET">GET</span>
+          <code>/api/conferences</code>
+        </div>
+        <div class="muted">Lấy danh sách hội thảo hoặc lọc theo từ khóa.</div>
+
+        <table class="table" style="margin-top:12px">
+          <thead><tr><th>Tham số</th><th>Kiểu</th><th>Mặc định</th><th>Mô tả</th></tr></thead>
+          <tbody>
+            <tr><td><code>q</code></td><td>string</td><td><span class="muted">—</span></td><td>Từ khóa (regex) tìm trong <code>name</code>, <code>acronym</code>, <code>topics</code>, <code>location</code>, <code>country</code>.</td></tr>
+            <tr><td><code>limit</code></td><td>number</td><td>50</td><td>Số bản ghi trả về.</td></tr>
+            <tr><td><code>skip</code></td><td>number</td><td>0</td><td>Bỏ qua N bản ghi đầu (phân trang).</td></tr>
+          </tbody>
+        </table>
+
+        <h3>Ví dụ</h3>
+        <pre><code># Lấy danh sách
+curl -s "https://neu-scholar-backend.vercel.app/api/conferences"
+
+# Tìm theo Robotics, giới hạn 10
+curl -s "https://neu-scholar-backend.vercel.app/api/conferences?q=Robotics&amp;limit=10"</code></pre>
+      </div>
+
+      <div class="panel" style="margin-top:14px">
+        <div class="endpoint">
+          <span class="method GET">GET</span>
+          <code>/api/conferences/search</code>
+        </div>
+        <div class="muted">Tìm kiếm ưu tiên vector; fallback text khi cần.</div>
+
+        <table class="table" style="margin-top:12px">
+          <thead><tr><th>Tham số</th><th>Kiểu</th><th>Mặc định</th><th>Mô tả</th></tr></thead>
+          <tbody>
+            <tr><td><code>q</code> <span class="pill">bắt buộc</span></td><td>string</td><td>—</td><td>Câu truy vấn.</td></tr>
+            <tr><td><code>limit</code></td><td>number</td><td>5</td><td>Số kết quả mong muốn.</td></tr>
+          </tbody>
+        </table>
+
+        <h3>Ví dụ</h3>
+        <pre><code>curl -s "https://neu-scholar-backend.vercel.app/api/conferences/search?q=Education&amp;limit=2"</code></pre>
+      </div>
+    </section>
+
+    <!-- Search All -->
+    <section id="search-all">
+      <h2>Tìm kiếm tổng hợp</h2>
+
+      <div class="panel">
+        <div class="endpoint">
+          <span class="method GET">GET</span>
+          <code>/api/search/all</code> <span class="muted">hoặc</span>
+          <span class="method POST">POST</span>
+          <code>/api/search/all</code>
+        </div>
+        <div class="muted">Trả về cả <code>journals</code> và <code>conferences</code> trong một request.</div>
+
+        <table class="table" style="margin-top:12px">
+          <thead><tr><th>Tham số</th><th>Kiểu</th><th>Mặc định</th><th>Mô tả</th></tr></thead>
+          <tbody>
+            <tr><td><code>q</code> <span class="pill">bắt buộc</span></td><td>string</td><td>—</td><td>Câu truy vấn.</td></tr>
+            <tr><td><code>limit</code></td><td>number</td><td>5</td><td>Giới hạn mỗi danh sách.</td></tr>
+          </tbody>
+        </table>
+
+        <h3>Ví dụ</h3>
+        <pre><code># GET
+curl -s "https://neu-scholar-backend.vercel.app/api/search/all?q=Robotics&amp;limit=2"
+
+# POST
+curl -s -X POST "https://neu-scholar-backend.vercel.app/api/search/all?limit=3" \
+  -H "Content-Type: application/json" \
+  -d '{"q":"Education"}'</code></pre>
+
+        <h3>Response mẫu</h3>
+        <pre><code>{
+  "query": "Robotics",
+  "limit": 2,
+  "journals": [ /* ... */ ],
+  "conferences": [ /* ... */ ],
+  "total": 4
+}</code></pre>
+      </div>
+    </section>
+
+    <!-- Agent -->
+    <section id="agent">
+      <h2>Agent API</h2>
+
+      <div class="panel">
+        <div class="endpoint">
+          <span class="method POST">POST</span>
+          <code>/api/agent</code>
+        </div>
+        <div class="muted">Agent sẽ truy hồi dữ liệu (vector + text fallback) rồi tạo câu trả lời ngắn gọn bằng LLM.</div>
+
+        <table class="table" style="margin-top:12px">
+          <thead><tr><th>Trường</th><th>Kiểu</th><th>Mặc định</th><th>Mô tả</th></tr></thead>
+          <tbody>
+            <tr><td><code>question</code> <span class="pill">bắt buộc</span></td><td>string</td><td>—</td><td>Câu hỏi người dùng.</td></tr>
+            <tr><td><code>provider</code></td><td>string</td><td><code>gemini</code></td><td><code>gemini</code> hoặc <code>qwen</code>.</td></tr>
+            <tr><td><code>topk</code></td><td>number</td><td>5</td><td>Số tài liệu truy hồi tối đa mỗi loại.</td></tr>
+          </tbody>
+        </table>
+
+        <h3>Ví dụ</h3>
+        <pre><code>curl -s -X POST "https://neu-scholar-backend.vercel.app/api/agent" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "question":"Các hội thảo Robotics top đầu năm nay?",
+    "provider":"gemini",
+    "topk":5
+  }'</code></pre>
+
+        <h3>Response mẫu</h3>
+        <pre><code>{
+  "provider": "gemini",
+  "answer": "… câu trả lời rút gọn …",
+  "retrieved": {
+    "conference": [ /* danh sách hội thảo */ ],
+    "journal": [ /* danh sách tạp chí */ ]
+  }
+}</code></pre>
+        <div class="tip">Ghi chú: câu trả lời phụ thuộc model & dữ liệu truy hồi.</div>
+      </div>
+    </section>
+
+    <!-- Errors -->
+    <section id="errors">
+      <h2>Mã lỗi & định dạng</h2>
+      <div class="panel">
+        <table class="table">
+          <thead><tr><th>HTTP</th><th>Ý nghĩa</th><th>Phản hồi</th></tr></thead>
+          <tbody>
+            <tr><td>200</td><td>OK</td><td>JSON kết quả</td></tr>
+            <tr><td>400</td><td>Bad Request</td><td><code>{"error":"Missing query param q"}</code></td></tr>
+            <tr><td>500</td><td>Server Error</td><td><code>{"error":"&lt;thông điệp lỗi&gt;"}</code></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ENV -->
+    <section id="env">
+      <h2>Biến môi trường liên quan</h2>
+      <div class="panel">
+        <table class="table">
+          <thead><tr><th>Biến</th><th>Mặc định</th><th>Mô tả</th></tr></thead>
+          <tbody>
+            <tr><td><code>PORT</code></td><td>4000</td></tr>
+            <tr><td><code>CRON_SCHEDULE</code></td><td><code>0 0 * * *</code></td><td>Lịch chạy import định kỳ (cron). Có thể tắt nếu không cần.</td></tr>
+            <tr><td><code>DEFAULT_LLM_PROVIDER</code></td><td><code>gemini</code></td><td>Nhà cung cấp LLM mặc định cho <code>/api/agent</code> (<code>gemini</code> | <code>qwen</code>).</td></tr>
+            <tr><td><code>MONGODB_URI</code></td><td><span class="muted">—</span></td><td>Chuỗi kết nối MongoDB.</td></tr>
+            <tr><td><code>MONGODB_DB</code></td><td><code>rpa</code></td><td>Tên database.</td></tr>
+          </tbody>
+        </table>
+        <div class="tip" style="margin-top:8px">
+          Dữ liệu sẽ được import khi server khởi động (<code>runImport()</code>) và theo lịch CRON (nếu bật).
+        </div>
+      </div>
+    </section>
+
+    <section class="footer">
+      <div>© 2025 RPA Academic API · Tài liệu auto-generated theo <code>app.js</code> bạn cung cấp.</div>
+    </section>
+  </div>
+</body>
+</html>
